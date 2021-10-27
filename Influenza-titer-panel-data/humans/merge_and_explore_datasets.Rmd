@@ -1,0 +1,192 @@
+---
+title: "Merge and explore human panel datasets"
+output: html_notebook
+---
+
+# Load the data, standardize format, and combine into a single data frame
+
+**Columns:**
+ * age.at.sampling
+ * age.at.circulation
+ * sample.year
+ * strain.year
+ * titer
+ * logtiter
+ * strain
+ * assay
+ * dataset
+ * study
+ * location
+
+### Datasets to merge:
+
+* Fonville 2014
+* Lessler 2012
+* Vinh 2020
+* Yang 2020
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r echo=F}
+## Load and standardize Lessler data
+Lessler_data <- read_csv('Lessler_2012/journal.ppat.1002802.s001.CSV') %>%
+  rename(age.at.sampling = age,
+         age.at.circulation = shift.age,
+         strain = neut.against) %>%
+  mutate(sample.year = 2009) %>%
+  extract(strain, into = 'strain.year', regex = '\\w*/\\w*/(\\d+)\\(H3N2\\)', remove = F, convert = T) %>%
+  rename(logtiter = titers) %>%
+  mutate(titer = round(exp(logtiter), 3),  # The raw logtiters are log(titer). Convert to titer.
+         logtiter = log2(titer/5)) %>%     # This is the standard formula for log titer, accounting for twofold dilutions. The min dilution is 10 in this dataset. A titer of 5 is undetectable. With this formula - titer=5:logtiter=0; titer=10:logtiter=1; titer=20:logtiter=2, etc.
+  mutate(assay = 'NT',
+         dataset = 'Lessler_2012',
+         study = 'Fluscape',
+         location = 'Guangzhou')%>%
+  select(age.at.sampling, 
+         age.at.circulation,
+         sample.year,
+         strain.year,
+         titer,
+         logtiter,
+         strain,
+         assay,
+         dataset,
+         study,
+         location)
+```
+
+
+```{r}
+## Import Fonville data
+parse_Fonville_titer <- function(titer){
+  titer[titer=='*'] = NA
+  titer[titer=='<10'] = 5
+  titer[titer=='>=1280'] = 1280
+  return(as.numeric(titer))
+}
+
+parse_year <- function(yr){
+  yr[yr<100] = yr + 1900
+}
+
+
+Fonville_data <- read_csv('Fonville_2014/Fonville_human_data.csv') %>%
+  pivot_longer(-c(1,2), names_to = 'strain', values_to = 'titer') %>%
+  filter(strain != 'A/PHILIPPINES/472/2002_EGG') %>%
+  mutate(strain = ifelse(strain == 'A/PHILIPPINES/427/2002_MDCK', 'A/PHILIPPINES/427/2002', strain)) %>%
+  mutate(titer = parse_Fonville_titer(titer),
+         logtiter = log2(titer/5)) %>%
+  extract(strain, into = 'strain.year', regex = '\\w+/(\\d+)$', remove = F, convert = T) %>%
+  mutate(strain.year = parse_year(strain.year)) %>%
+  rename(sample.year = `Sample year`) %>%
+    ## Merge in years of birth inferred by Kangchon
+  merge(read_csv('Fonville_2014//YOB_inferred.csv') %>% select(`Subject number`, YOB),
+        by = "Subject number", all.x = T) %>%
+  mutate(age.at.sampling = sample.year - YOB,
+         age.at.circulation = strain.year - YOB,
+         is.vac = NA,
+         assay = 'HAI',
+         dataset = 'Fonville_2014',
+         study = 'Ha Nam',
+         location = 'Ha Nam') %>%
+  select(age.at.sampling, 
+         age.at.circulation,
+         sample.year,
+         strain.year,
+         titer,
+         logtiter,
+         strain,
+         assay,
+         dataset,
+         study,
+         location)
+```         
+
+  
+```{r}
+## Import Vinh Data
+#https://www.medrxiv.org/content/10.1101/2021.01.03.21249160v1
+Vinh_data <- read_csv('Vinh_2020/Vinh_et_al_data.csv') %>%
+  select(!contains('H1')) %>%
+  pivot_longer(contains('H3'), names_to = 'strain', values_to = 'titer') %>%
+  mutate(logtiter = log2(titer/10))%>%
+  extract(strain, into = 'strain.year', regex = '\\w+_H\\d_(\\d+)$', remove = F, convert = T) %>%
+  rename(sample.year = YEAR) %>%
+  mutate(age.at.sampling = floor(AGE),
+         age.at.circulation = strain.year - BIRTHYEAR,
+         is.vac = NA,
+         assay = 'microarray',
+         dataset = 'Vinh_et_al_2020',
+         study = 'Vietnam Blood Bank',
+         location = 'Vietnam') %>%
+  select(age.at.sampling, 
+         age.at.circulation,
+         sample.year,
+         strain.year,
+         titer,
+         logtiter,
+         strain,
+         assay,
+         dataset,
+         study,
+         location)
+```    
+
+```{r}
+## Import Yang Data
+
+yang_parse_age <- function(age){
+ data.frame(age = age) %>%
+    extract(age, into = c('lower', 'upper'), regex = '(-?\\d*) to (-?\\d*)', convert = T) %>%
+    mutate(mid.age = (lower+upper)/2) %>%
+    pull(mid.age)
+}
+
+
+Yang_data <- read_csv('Yang_2020_journal.ppat.1008635/Yang_seroconversion.csv') %>%
+  rename(logtiter_baseline = log_hi_baseline,
+         logtiter_followup = log_hi_followup) %>%
+  pivot_longer(cols = c(age_baseline, age_followup, logtiter_baseline, logtiter_followup),
+               names_to = c('.value', 'sample'),
+               names_sep = "_") %>%
+  select(-contains('vaccine'), -seroconversion, -fold_of_change) %>%
+  mutate(age.at.circulation = yang_parse_age(age_at_isolation),
+         age.at.sampling = yang_parse_age(age),
+         sample.year = ifelse(sample == 'baseline', 2010, 2015),
+         titer = 2^(logtiter)*5) %>%
+  rename(strain.year = year_of_isolation) %>%
+  mutate(assay = 'HAI',
+         dataset = 'Yang_2020',
+         study = 'Fluscape',
+         location = 'Guangzhou') %>%
+  select(age.at.sampling, 
+         age.at.circulation,
+         sample.year,
+         strain.year,
+         titer,
+         logtiter,
+         strain,
+         assay,
+         dataset,
+         study,
+         location)
+```    
+
+
+
+
+## Combine the data sets
+```{r}
+master_data <- bind_rows(Yang_data, 
+                         Fonville_data,
+                         Lessler_data,
+                         Vinh_data)
+write_csv(master_data, 'combined_human_panel_data.csv')
+
+head(master_data)
+```
+
+
