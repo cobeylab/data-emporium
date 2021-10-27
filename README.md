@@ -1,11 +1,13 @@
 # data-emporium
 A place to keep track of public or confidential datasets available to the Cobey Lab.
 
-## Data categories:
-
 Contact Katie G (kgostic@uchicago.edu) if you need help adding a new dataset or want to propose a new category.
 
 **DO NOT post confidential data to this repo. Instead, upload a description of where the data can be found (e.g. on Midway).**
+
+
+
+## Data categories:
 
 * [Influenza titer panel data - humans](https://github.com/cobeylab/data-emporium/blob/main/README.md#influenza-titer-panel-data---humans) - cross-sectional individual titers to a panel of flu strains. Some studies include two or more timepoints.
 * [Influenza titer panel data - ferrets](https://github.com/cobeylab/data-emporium/blob/main/README.md#influenza-titer-panel-data---ferrets) - panel data from naive ferrets used to construct antigenic maps.
