@@ -7,7 +7,7 @@ Contact Katie G (kgostic@uchicago.edu) if you need help adding a new dataset or 
 
 
 
-## Data categories:
+## Contents:
 
 * [Influenza titer panel data - humans](https://github.com/cobeylab/data-emporium/blob/main/README.md#influenza-titer-panel-data---humans) - cross-sectional individual titers to a panel of flu strains. Some studies include two or more timepoints.
 * [Influenza titer panel data - ferrets](https://github.com/cobeylab/data-emporium/blob/main/README.md#influenza-titer-panel-data---ferrets) - panel data from naive ferrets used to construct antigenic maps.
