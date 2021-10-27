@@ -5,7 +5,7 @@ A place to keep track of public or confidential datasets available to the Cobey 
 
 Contact Katie G (kgostic@uchicago.edu) if you need help adding a new dataset or want to propose a new category.
 
-* [Influenza titer panel data - humans] - cross-sectional individual titers to a panel of flu strains. Some studies include two or more timepoints.
+* [Influenza titer panel data - humans](https://github.com/cobeylab/data-emporium/blob/main/README.md#influenza-titer-panel-data---humans) - cross-sectional individual titers to a panel of flu strains. Some studies include two or more timepoints.
 * [Influenza titer panel data - ferrets] - panel data from naive ferrets used to construct antigenic maps.
 * [Influenza cohort data (longitudinal)] - data from studies that follow a cohort of individuals over time. Usually includes a combination of PCR-confirmed infections, and serological data. 
 * [Influenza epidemiological/surveillance data] -
