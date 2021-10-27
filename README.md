@@ -26,4 +26,12 @@ Contact Katie G (kgostic@uchicago.edu) if you need help adding a new dataset or 
 | Vinh et al. 2020     | NA - Analyzed Vietnam blood bank samples | Y      | 2009-2015                               | 1918-2009    | H3N2, H1N1, B/Vic, B/Yam | Protein Microarray | [See data/code link](https://www.medrxiv.org/content/10.1101/2021.01.03.21249160v1)                |               |
 
 
+## Influenza titer panel data - ferrets
+
+| Article              | Public | Notes                                                                                                                                       | Strain panel years | Subtypes                 | Primary source                                                               | File location |
+|----------------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------|--------------------|--------------------------|------------------------------------------------------------------------------|---------------|
+| Fonville et al. 2014 | Yes    | Study-specific.                                                                                                                             | 1992-2011          | H3N2                     | [Table S1](https://www.science.org/doi/abs/10.1126/science.1256427)          |               |
+| Bedford et al.       | Yes    | Compiled panel data from many studies, including Smith et al. 2004. Strains from the late 1990s and 2000s are dramatically overrepresented. | 1968-2007          | H1N1, H3N2, B/Vic, B/Yam | [Dryad archive](https://datadryad.org/stash/dataset/doi:10.5061/dryad.rc515) |               |
+
+
 
