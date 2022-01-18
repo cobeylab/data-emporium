@@ -27,6 +27,8 @@ output: html_notebook
 
 ```{r}
 library(tidyverse)
+filter <- dplyr::filter
+extract <- tidyr::extract
 ```
 
 
@@ -44,8 +46,10 @@ Lessler_data <- read_csv('Lessler_2012/journal.ppat.1002802.s001.CSV') %>%
   mutate(assay = 'NT',
          dataset = 'Lessler_2012',
          study = 'Fluscape',
-         location = 'Guangzhou')%>%
-  select(age.at.sampling, 
+         location = 'Guangzhou',
+         id = paste0(id, '_Lessler2012'))%>%
+  select(id, 
+         age.at.sampling, 
          age.at.circulation,
          sample.year,
          strain.year,
@@ -91,8 +95,10 @@ Fonville_data <- read_csv('Fonville_2014/Fonville_human_data.csv') %>%
          assay = 'HAI',
          dataset = 'Fonville_2014',
          study = 'Ha Nam',
-         location = 'Ha Nam') %>%
-  select(age.at.sampling, 
+         location = 'Ha Nam',
+         id = paste0(`Subject number`, '_Fonville_2014')) %>%
+  select(id, 
+         age.at.sampling, 
          age.at.circulation,
          sample.year,
          strain.year,
@@ -121,8 +127,10 @@ Vinh_data <- read_csv('Vinh_2020/Vinh_et_al_data.csv') %>%
          assay = 'microarray',
          dataset = 'Vinh_et_al_2020',
          study = 'Vietnam Blood Bank',
-         location = 'Vietnam') %>%
-  select(age.at.sampling, 
+         location = 'Vietnam',
+         id = paste0(`02FL_SAMPLE_ID`, '_Vinh2020')) %>%
+  select(id, 
+         age.at.sampling, 
          age.at.circulation,
          sample.year,
          strain.year,
@@ -146,7 +154,7 @@ yang_parse_age <- function(age){
 }
 
 
-Yang_data <- read_csv('Yang_2020_journal.ppat.1008635/Yang_seroconversion.csv') %>%
+Yang_data <- read_csv('Yang_2020/Yang_seroconversion.csv') %>%
   rename(logtiter_baseline = log_hi_baseline,
          logtiter_followup = log_hi_followup) %>%
   pivot_longer(cols = c(age_baseline, age_followup, logtiter_baseline, logtiter_followup),
@@ -161,8 +169,10 @@ Yang_data <- read_csv('Yang_2020_journal.ppat.1008635/Yang_seroconversion.csv') 
   mutate(assay = 'HAI',
          dataset = 'Yang_2020',
          study = 'Fluscape',
-         location = 'Guangzhou') %>%
-  select(age.at.sampling, 
+         location = 'Guangzhou',
+         id = paste0(participant_id, 'Yang_2020')) %>%
+  select(id,
+         age.at.sampling, 
          age.at.circulation,
          sample.year,
          strain.year,
@@ -175,6 +185,43 @@ Yang_data <- read_csv('Yang_2020_journal.ppat.1008635/Yang_seroconversion.csv') 
          location)
 ```    
 
+## Fonville_2016
+```{r}
+Fonville_raw <- read_csv('Fonville_2016/Dataset_S2.csv', skip = 2) %>% 
+  as.matrix() %>%
+  t() %>%
+  as.data.frame() 
+colnames(Fonville_raw) <- Fonville_raw[1,]
+Fonville_2016_data <- Fonville_raw[-1, ] %>%
+  rownames_to_column(var = 'id') %>%
+  pivot_longer(-(1:4), names_to='strain', values_to = 'titer') %>%
+  extract(season, into = 'sample.year', regex = '\\d\\d\\d\\d/(\\d\\d\\d\\d)',convert = T) %>%
+  mutate(age.at.sampling = as.numeric(`age (months)`)/12,
+         age.at.circulation = age.at.sampling,
+         assay = 'HAI',
+         dataset = 'Fonville_2016',
+         study = NA,
+         location = 'Roterdam_Netherlands') %>%
+  extract(strain, into = 'strain.year', regex = '\\w+/\\d*/(\\d\\d)', convert = T, remove = F) %>%
+  mutate(strain.year = ifelse(strain.year < 20, strain.year+2000, strain.year+1900),
+         id = paste0(id, '_Fonville2016'),
+         titer = ifelse(titer == '<10', 5, as.numeric(titer)),
+         logtiter = log2(titer/5)) %>%
+  select(id,
+         age.at.sampling, 
+         age.at.circulation,
+         sample.year,
+         strain.year,
+         titer,
+         logtiter,
+         strain,
+         assay,
+         dataset,
+         study,
+         location)
+write_csv(Fonville_2016_data, path = 'Fonville_2016/parsed_table_S2.csv')
+```
+
 
 
 
@@ -183,7 +230,8 @@ Yang_data <- read_csv('Yang_2020_journal.ppat.1008635/Yang_seroconversion.csv') 
 master_data <- bind_rows(Yang_data, 
                          Fonville_data,
                          Lessler_data,
-                         Vinh_data)
+                         Vinh_data,
+                        Fonville_2016_data)
 write_csv(master_data, 'combined_human_panel_data.csv')
 
 head(master_data)
