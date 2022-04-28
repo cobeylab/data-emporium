@@ -2,10 +2,12 @@
 
 This is the raw .csv file downloaded from the supplement of this [article](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1002802).
 
+* These are [Fluscape](http://www.iddynamics.jhsph.edu/projects/fluscape) data.
+* I believe these are the same data analyzed in several other studies, including [Lessler et al. 2011](https://www.nature.com/articles/ncomms1432), [Kucharski et al. 2015](√), [Truelove et al. 2016](https://onlinelibrary.wiley.com/doi/10.1111/irv.12408), [Kucharski et al. 2018](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.2004974), [Yang et al. 2020](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1008635) and possibly others.
 * This is a cross-sectional study.
 * Some participatns have a history of vaccination.
 
-Quoting from the methods:
+Quoting from the [Lessler et al. 2012](https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1002802) methods:
 
 > **Participant recruitment**
 > Participants were enrolled from 100 randomly selected households from five study locations (20 per location) in a transect extending to the northeast from Guangzhou, China, as described in Lessler et al [[21]](https://www.nature.com/articles/ncomms1432). All household members over two years of age were eligible to participate. Household members agreeing to participate were administered informed consent and offered two levels of participation: (1) completing a questionnaire and (2) completing the questionnaire and providing a blood sample. *Enrollment ran from July 8, 2009 to September 21, 2009.*
