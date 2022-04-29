@@ -15,7 +15,7 @@
       * Infection year - For individuals who seroconverted or had a PCR-confirmed H3N2 infection.
       * days_PCR_swab_to_serum_sample - Time elapsed between PCR-confirmed infection (time of swab), and annual serological sample, filled in by hand from Fig. S15. 
 
-* `Fonville2014_FigS43.csv`
+* `Fonville2014_FigS43.csv` - data compiled manually by Kangchon Kim from supplementary figures.
 
 
 **Guide to tabs in .xlsx supplementary data file**
