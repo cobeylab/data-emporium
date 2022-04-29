@@ -1,4 +1,4 @@
-Subject number,YOB,ID,Sample,Notes,Infection Time,days_PCR_sawb_to_serum_draw
+Subject number,YOB,ID,Sample,Notes,Infection Time,days_PCR_swab_to_serum_draw
 1,1957,1,H3,PCR+,2008,90
 2,1962,1,original,,,
 3,2000,1,original,,,
